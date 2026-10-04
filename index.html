@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B1G Hockey Vault</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 65%, #05070c 100%);
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(56, 189, 248, 0.2);
+      --card-glow: 0 10px 40px -10px rgba(14, 165, 233, 0.25);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --badge-bg: rgba(56, 189, 248, 0.12);
+      --badge-text: #38bdf8;
+      --btn-bg: rgba(30, 41, 59, 0.85);
+      --btn-hover: rgba(51, 65, 85, 0.95);
+      --btn-border: rgba(148, 163, 184, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #060911;
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background grid */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      max-width: 600px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #22c55e;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #ffffff 40%, #7dd3fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Controls bar */
+    .controls {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--btn-bg);
+      color: var(--text-main);
+      border: 1px solid var(--btn-border);
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--btn-hover);
+      border-color: var(--accent);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+    }
+
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .app-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: var(--card-glow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 10px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 100%;
+    }
+
+    /* Device frame bar */
+    .card-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 8px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .window-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .circle-red { background-color: #ef4444; opacity: 0.8; }
+    .circle-yellow { background-color: #f59e0b; opacity: 0.8; }
+    .circle-green { background-color: #10b981; opacity: 0.8; }
+
+    .vault-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      max-width: 260px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* The iframe frame */
+    .frame-wrapper {
+      position: relative;
+      width: 420px;
+      height: 600px;
+      max-width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0f172a;
+      transition: all 0.3s ease;
+    }
+
+    /* Theater / Expanded Mode */
+    .app-card.theater-mode .frame-wrapper {
+      width: 850px;
+      height: 720px;
+      max-width: 95vw;
+    }
+
+    .frame-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: 0;
+    }
+
+    /* Loading overlay */
+    .loading-spinner {
+      position: absolute;
+      inset: 0;
+      background: #0b1120;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      z-index: 2;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .loading-spinner.loaded {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(56, 189, 248, 0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 2rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.82rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .frame-wrapper {
+        width: 100%;
+        height: 580px;
+      }
+
+      .app-card {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <header>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span>Hockey Vault Portal</span>
+    </div>
+    <h1>B1G Hockey Vault</h1>
+    <p class="subtitle">Embedded live dashboard and statistics hub</p>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="reloadBtn" title="Reload iframe content">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Reload
+    </button>
+    <button class="btn" id="modeBtn" title="Toggle theater view size">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+      </svg>
+      <span id="modeText">Expand View</span>
+    </button>
+    <a href="https://b1g-hockey-vault-lmsaumqmy-wordwide-top-10.vercel.app/" target="_blank" rel="noopener noreferrer" class="btn" title="Open source in new window">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+      Open Direct
+    </a>
+  </div>
+
+  <main>
+    <div class="app-card" id="appCard">
+      <div class="card-topbar">
+        <div class="window-controls">
+          <span class="window-circle circle-red"></span>
+          <span class="window-circle circle-yellow"></span>
+          <span class="window-circle circle-green"></span>
+        </div>
+        <div class="vault-url">b1g-hockey-vault.vercel.app</div>
+        <div style="width: 42px;"></div>
+      </div>
+
+      <div class="frame-wrapper">
+        <div class="loading-spinner" id="spinner">
+          <div class="spinner"></div>
+          <span>Loading Hockey Vault...</span>
+        </div>
+        <iframe 
+          id="vaultFrame"
+          src="https://b1g-hockey-vault-lmsaumqmy-wordwide-top-10.vercel.app/" 
+          width="420" 
+          height="600" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; encrypted-media; gyroscope" 
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>Embedded from <a href="https://b1g-hockey-vault-lmsaumqmy-wordwide-top-10.vercel.app/" target="_blank" rel="noopener noreferrer">B1G Hockey Vault</a></p>
+    <p>© 2026 B1G Hockey Vault Portal</p>
+  </footer>
+
+  <script>
+    const iframe = document.getElementById('vaultFrame');
+    const spinner = document.getElementById('spinner');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const modeBtn = document.getElementById('modeBtn');
+    const modeText = document.getElementById('modeText');
+    const appCard = document.getElementById('appCard');
+
+    // Remove spinner on frame load
+    iframe.addEventListener('load', () => {
+      spinner.classList.add('loaded');
+    });
+
+    // Fallback timer to hide spinner after 6 seconds in case load event is restricted by sandbox
+    setTimeout(() => {
+      spinner.classList.add('loaded');
+    }, 6000);
+
+    // Reload action
+    reloadBtn.addEventListener('click', () => {
+      spinner.classList.remove('loaded');
+      iframe.src = iframe.src;
+    });
+
+    // Toggle expanded / theater mode
+    modeBtn.addEventListener('click', () => {
+      appCard.classList.toggle('theater-mode');
+      const isExpanded = appCard.classList.contains('theater-mode');
+      modeText.textContent = isExpanded ? 'Reset View (420x600)' : 'Expand View';
+    });
+  </script>
+</body>
+</html>
